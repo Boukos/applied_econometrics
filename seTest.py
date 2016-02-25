@@ -1,0 +1,14 @@
+import pandas as pd
+import statsmodels.formula.api as smf
+from urllib import urlopen
+
+filehandle = urlopen('http://www.kellogg.northwestern.edu/faculty/petersen/htm/papers/se/test_data.txt')
+df = pd.read_table(filehandle, names=['firmid','year','x','y'],
+                   delim_whitespace=True)
+#print(df)
+
+lm = smf.ols(formula='y ~ x', data=df).fit(use_t=True)
+print(lm.bse)
+
+lm1 = smf.ols(formula='y ~ x', data=df).fit(cov_type='HC1', use_t=True)
+print(lm1.bse)
