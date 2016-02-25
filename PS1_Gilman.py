@@ -14,9 +14,9 @@ from pandas import DataFrame
 import statsmodels.formula.api as smf
 import statsmodels.api as sm
 import matplotlib.pyplot as plt
-#import statsmodels.genmod.api as gee
+import os
 
-path = '/home/rudebeans/Desktop/school_spring2016/applied_econometrics/'
+path = path = os.path.dirname(__file__)
 
 df = pd.read_stata(path+"pubtwins.dta", convert_categoricals=False)
 
