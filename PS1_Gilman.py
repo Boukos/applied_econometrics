@@ -117,7 +117,7 @@ for i in range(len(df.columns)):
         print("16: ", np.mean(df16[var]))
         print('\n')
 
-print("Answer: At the p > .05 level: Highschool group is slightly whiter. College group is slightly more self-employed. Highschool group is slightly more female. Ability is correlated with both education and wages. Omitting this variable would give our estimates of the effects of educ on wages a positive bias--ie giving educ more credit than is due.\n\n\n")
+print("Answer: At the p > .05 level: Highschool group is slightly whiter. College group is slightly more self-employed. Highschool group is slightly more female. Ability is correlated with both education and wages. Omitting this variable would give our estimates of the effects of educ on wages a positive bias--ie giving educ more credit than is due. In light of this, we should be skeptical of this estimate of the return on educ. \n\n\n")
 
 
 print("c. Now create dummy variables for each of the eleven levels of schooling (8-18). Regress both wages and log-wages on just the dummy variables. Is the effect of education on wages linear in education? How about its effect on log-wages? Focusing on log-wages, describe where the “nonlinearities” are, if any.\n\n\n")
