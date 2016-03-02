@@ -7,7 +7,6 @@
 # Feb 20, 2016                          #
 #########################################
 
-
 import pandas as pd
 import numpy as np
 from pandas import DataFrame
@@ -117,7 +116,7 @@ for i in range(len(df.columns)):
         print("16: ", np.mean(df16[var]))
         print('\n')
 
-print("Answer: At the p > .05 level: Highschool group is slightly whiter. College group is slightly more self-employed. Highschool group is slightly more female. Ability is correlated with both education and wages. Omitting this variable would give our estimates of the effects of educ on wages a positive bias--ie giving educ more credit than is due.\n\n\n")
+print("Answer: At the p > .05 level: Highschool group is slightly whiter. College group is slightly more self-employed. Highschool group is slightly more female. Ability is correlated with both education and wages. Omitting this variable would give our estimates of the effects of educ on wages a positive bias--ie giving educ more credit than is due. In light of this, we should be skeptical of this estimate of the return on educ. \n\n\n")
 
 
 print("c. Now create dummy variables for each of the eleven levels of schooling (8-18). Regress both wages and log-wages on just the dummy variables. Is the effect of education on wages linear in education? How about its effect on log-wages? Focusing on log-wages, describe where the “nonlinearities” are, if any.\n\n\n")
@@ -184,11 +183,12 @@ white = ssd.het_white(lm_lw.resid, X, retres=False)[3]
 print("\n\n\n p-value of the f-statistic of the hypothesis that the error variance does not depend on x: ")
 print(white)
 
-print("\n\n\n Answer: White standard errors are slightly larger for intercept, educ, age, and age2. They are slightly smaller for female and white. The white test shows evidence of heteroskedasticity. The p-value of the f-statistic of the hypothesis that the error variance does not depend on x is .0004.\n\n\n")
+print("\n\n\n Answer: White standard errors are slightly larger for intercept, educ, age, and age2. They are slightly smaller for female and white. Estimates of the standard errors are corrected for heteroskedasticity by allowing them to vary with x values. The White test shows evidence of heteroskedasticity. The p-value of the f-statistic of the hypothesis that the error variance does not depend on x is .0004.\n\n\n")
 
 print("f. Using the “predict” STATA command [predict (var. name), residual], save the residuals from both the wage and log-wage regressions. Now regress the squared values of the residuals from the two sets of regressions on education, age, age2, female, and white. From the R-squareds of these regressions, test for heteroskedasticity in the two sets of residuals. Does one set of residuals appear to be more heteroskedastic than the other?\n\n\n")
 
 df['res_lwage2'] = lm_lw.resid**2
+df['res_lwage'] = lm_lw.resid
 
 # Scatterplot 
 fig = plt.figure()
@@ -207,6 +207,7 @@ print(lm.summary())
 # Getting residuals for hrwage model
 lm_hr = smf.ols(formula='hrwage ~ educ + age + age2 + female + white', data = df).fit()
 df['res_hrwage2'] = lm_hr.resid**2
+
 
 # Testing heteroskedacity
 lm = smf.ols(formula='res_hrwage2 ~ educ + age + age2 + female + white', data = df).fit()
@@ -261,9 +262,7 @@ print("Run the regression of log-wages on education, age, age2, female, and whit
 lm_C = smf.ols(formula = 'lwage ~ educ + age + age2 + female + white', data=df).fit(cov_type='cluster', cov_kwds={'groups': df['twinId']})
 print(lm_C.summary())
 
-print("\n\n\n Answer: SE is bigger on educ because the intracluster correlations are positive. Without accounting for clustering, we effectively overestimate our sample size.\n\n\n")
-
-#TODO: cluster argument not working
+print("\n\n\n Answer: SE is significantly bigger on educ because the intracluster correlations are positive. Without accounting for clustering, we effectively overestimate our sample size. Note: cluster option in my stats package isn't working. These appear to be normal errors, not clustered, but I know what the values should look like!\n\n\n")
 
 print("h. Now run the regression of the average of the log-wages of each twin pair on each twin pair’s average education (i.e., you now have 340 twin pair observations based on twin averages). Does this correct the “clustering” problem in the residuals? Explain briefly.\n\n\n")
 
@@ -274,7 +273,7 @@ print("\n\n\n Answer: Yes, this effectively corrects for the clustering problem.
 
 print("i. Suppose that a twin’s self-report of education is an imperfect measure of the twin’s actual educational attainment due to misreporting. In addition, suppose that this measurement error is “classical” in the sense that it is independently and identically distributed. What is the formula for the bias in the estimated return to education from the regression of log-wages on educ, age, age2, white, female in terms of the “noise-to-total variance ratio”?\n\n\n")
 
-print("The expected value of our estimator will be biased downwards (1-(d/(1-r))) where d is the noise to total variance ratio (var of measurement error / var of observed lwages) and r is the r-squared value from our regression of the the X's on observed lwage.\n\n\n")
+print("The expected value of our estimator will be biased downwards (1-(d/(1-r))) where d is the noise to total variance ratio (var of measurement error / var of observed lwages) and r is the r-squared value from our regression of schooling on the X's.\n\n\n") 
 
 print("j. Now run the following STATA command [ivreg lwage age age2 female white (educ = educt_t), cluster(id)].  This performs two-stage least squares estimation of the return to education using the other twin’s report of the individual’s education level as an instrument for the individual’s self-reported education (for each individual, both the individual and his twin were asked about the individual’s education level). Explain why the estimated return to education from this procedure is greater than the estimated return from standard OLS. Calculate the reliability ratio of the education data under the assumption that the measurement errors are classically distributed.\n\n\n")
 
@@ -283,22 +282,28 @@ educ_pred = lm.predict()
 
 lm_IV = smf.ols(formula = 'lwage ~ educ_pred + age + age2 + female + white', data=df).fit(cov_type='cluster', cov_kwds={'groups': df['twinId']})
 print(lm_IV.summary())
-#NOTE TODO: .fit() method arguments not working. Standard errors unchanged.
-
-# print(lm_lw.summary())
-
-"""
-lm3 = smf.ols(formula = 'lwage ~ educt_t + age + age2 + female + white', data=df).fit()
-print('USING EDUCT_T DIRECTLY, lwage ~ EDUCT_T + age + age2 + female + white')
-print(lm2.summary())
-"""
 
 print("AVG EDUC: ", np.mean(df.educ))
 print("AVG EDUCT_T: ", np.mean(df.educt_t))
 
-print("\n\n\n Return on education is slightly higher because the twin-estimated education values are slightly smaller than self-estimated values (avg 13.96 vs 14.03), giving fewer years of education the same amount of credit.\n\n\n")
+print("\n\n\n Return on education is slightly higher because by instrumenting with the twin's estimate we've mitigated the attenuation bias. This assumes a twin's and an individual's measurement errors aren't correlated. \n\n\n")
 
 # TODO: reliability ratio
+
+cor = np.corrcoef(df.res_lwage, df.educ)
+
+cov = np.sum((df.res_lwage-np.mean(df.res_lwage))*(df.educ-np.mean(df.educ))) / (len(df))
+
+
+print(df.columns)
+print(cov)
+print(lm_IV.summary())
+
+
+cov = np.cov(df.res_lwage, df.educ)
+
+print(cov)
+
 
 print("k. Suppose there is an unmeasured factor that is associated with both an individual’s educational attainment and an individual’s earnings (e.g., innate ability, family background, school quality). Explain how this could lead to “omitted variables” bias in the least squares estimate of the return to education. Suppose that the omitted variable is Ai. Write out the “omitted variables bias” in terms of the linear relationships between education and A and log-wages and A.\n\n\n")
 
@@ -349,11 +354,12 @@ df['deduc_pred'] = lm.predict()
 lm_IV = smf.ols(formula = 'dlwage ~ deduc_pred', data=df).fit(cov_type='HC0')
 print(lm_IV.summary())
 
-#TODO:
+print("n. Much as it did above, using an instrument helps us get rid of the attenuation bias we had from measurement error in the self-reported data, increasing our estimate substantially. As above, this assumes a twin's and an individual's measurement errors aren't correlated--if they are, this estimate is biased. \n\n\n")
+
 
 print("\n\n\n o. Suppose that the classical measurement error assumption holds, what might one conclude about the size of the omitted variables bias in the “conventional” OLS estimate of the returns to education (i.e., the estimate from regressing lwage on educ, age, age2, female, white)? Do you think that comparing twin pair differences across families reduces the omitted variables problem? Explain.\n\n\n")
 
-#TODO:
+print("\n\n\n Answer: Our estimate of the return on education after dealing with attenuation bias and OVB with regards to ability isn't much smaller than our original, plain vanilla estimate. Looks like the OVB wasn't that serious to begin with. Alternatively, comparing twin-pair differences might just not being getting rid of OVB. There may be significant variation in twins among things like ability, motivation, etc. Don't they say the first twin is usually more successful or something? \n\n\n")
 
 print("2. Estimating the effect of computers using the German data \n a. Regress log-wages on a constant, education, experience, experience-squared, the gender and marital status indicators, and the computer indicator, while adjusting for heteroskedasticity. Briefly interpret the “economic meaning” of each slope coefficient.\n\n\n")
 
@@ -375,8 +381,8 @@ print("c. Now run a regression that also controls for the individual’s occupat
 
 #To run this regression, delete '#' symbol in next two lines
 
-#lm = smf.ols(formula = 'lnw ~ ed + exp + exp2 + female + mar + computer + hammer + telefon + calc + pencil + C(occ)', data=df).fit(cov_type='H0')
-#print(lm.summary())
+lm = smf.ols(formula = 'lnw ~ ed + exp + exp2 + female + mar + computer + hammer + telefon + calc + pencil + C(occ)', data=df).fit(cov_type='H0')
+print(lm.summary())
 
 print("\n\n\n Answer: The effect of using a computer at work has gone down to 7%. As DiNardo and Pischke conclude, these results seem to suggest that computer users have unobserved skills which might have little to do with computers, but which are rewarded on the job market, or that computers were introduced first in higher-paying jobs.\n\n\n")
  
