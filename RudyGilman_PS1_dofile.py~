@@ -367,8 +367,6 @@ print("Answer: Returns to ed reduced to 6%, returns to computer reduced to 12%. 
 
 print("c. Now run a regression that also controls for the individual’s occupation category as “fixed effects” – e.g., areg y x, absorb(occ) robust (data must be sorted by occ). Interpret the implications of your findings for the role of potential omitted variables bias in the OLS estimate of the effect of computer use on log-wages (see DiNardo and Pischke for their interpretation).\n\n\n")
 
-#To run this regression, delete '#' symbol in next two lines
-
 lm = smf.ols(formula = 'lnw ~ ed + exp + exp2 + female + mar + computer + hammer + telefon + calc + pencil + C(occ)', data=df).fit(cov_type='H0')
 print(lm.summary())
 
