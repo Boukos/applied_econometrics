@@ -75,7 +75,8 @@ ax.scatter(df.educ, df.lwage)
 ax.set_title('Twins: educ and lwage')
 ax.set_ylabel('lwage')
 ax.set_xlabel('educ')
-fig.savefig(path+"twins_lwage_educ.png")
+plt.show()
+#fig.savefig(path+"twins_lwage_educ.png")
 fig.clf()
 
 print("\n\n\n Now regress log-wages on a constant, education, age, age-squared, and the gender and racial indicators. Briefly interpret the “economic meaning” of each slope coefficient. What do the coefficients on age and age-squared imply about the life-cycle profile of earnings? Would including just a linear term for age lead to a more appropriate regression model? Explain.\n\n\n")
@@ -367,10 +368,10 @@ print("Answer: Returns to ed reduced to 6%, returns to computer reduced to 12%. 
 
 print("c. Now run a regression that also controls for the individual’s occupation category as “fixed effects” – e.g., areg y x, absorb(occ) robust (data must be sorted by occ). Interpret the implications of your findings for the role of potential omitted variables bias in the OLS estimate of the effect of computer use on log-wages (see DiNardo and Pischke for their interpretation).\n\n\n")
 
-lm = smf.ols(formula = 'lnw ~ ed + exp + exp2 + female + mar + computer + hammer + telefon + calc + pencil + C(occ)', data=df).fit(cov_type='H0')
-print(lm.summary())
+#lm = smf.ols(formula = 'lnw ~ ed + exp + exp2 + female + mar + computer + hammer + telefon + calc + pencil + C(occ)', data=df).fit(cov_type='H0')
+#print(lm.summary())
 
-print("\n\n\n Answer: The effect of using a computer at work has gone down to 7%. As DiNardo and Pischke conclude, these results seem to suggest that computer users have unobserved skills which might have little to do with computers, but which are rewarded on the job market, or that computers were introduced first in higher-paying jobs.Note, these results make it clear that this is not an appropriate way to measure the returns to a given technology—are we to assume that using a hammer yields negative returns? \n\n\n")
+print("\n\n\n Note: After getting the answer, I commented out the fixed effects regression to save time. Answer: The effect of using a computer at work has gone down to 7%. As DiNardo and Pischke conclude, these results seem to suggest that computer users have unobserved skills which might have little to do with computers, but which are rewarded on the job market, or that computers were introduced first in higher-paying jobs.Note, these results make it clear that this is not an appropriate way to measure the returns to a given technology—are we to assume that using a hammer yields negative returns? \n\n\n")
  
 
 
