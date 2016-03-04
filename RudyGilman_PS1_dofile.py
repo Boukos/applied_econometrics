@@ -15,7 +15,9 @@ import statsmodels.api as sm
 import matplotlib.pyplot as plt
 import os
 
-path = path = os.path.dirname(__file__)
+path = "/home/rudebeans/Desktop/school_spring2016/applied_econometrics/"
+
+#os.path.dirname(__file__)
 
 df = pd.read_stata(path+"pubtwins.dta", convert_categoricals=False)
 
@@ -97,8 +99,7 @@ print("\n\n\n Answer: R squared is essentially the same as before adding in extr
 
 print("b. Compare the estimated return to education to the one from the bivariate regression model. Are they different? What might this imply about how education is distributed across the twins population?\n\n\n")
 
-#TODO The estimated return to education is approximately the same as in the bivariate model. 
-
+print("Answer: Estimated returns are very similar. Education is probably distrubuted evenly across the population.\n\n\n")
 
 print("Now compare the mean characteristics of individuals with a college degree (educ=16) to individuals with just a high school degree (educ=12). Can you think of variables that we have not controlled for that may be related to both educational attainment and earnings? What does this imply about how we should interpret the least squares estimate of the relation between log-wages and education?\n\n\n")
 
@@ -159,7 +160,8 @@ ax.scatter(df.educ, df.hrwage)
 ax.set_title('Twins: educ and hrwage')
 ax.set_ylabel('hrwage')
 ax.set_xlabel('educ')
-fig.savefig(path+"twins_hrwage_educ.png")
+plt.show()
+#fig.savefig(path+"twins_hrwage_educ.png")
 fig.clf()
 
 print("Answer: There is evidence of possible heteroskedacity in both hrwage and lwage models with larger variation in wages as educ increases\n\n\n")
@@ -194,10 +196,11 @@ df['res_lwage'] = lm_lw.resid
 fig = plt.figure()
 ax = fig.add_subplot(111)
 ax.scatter(df.educ, df.res_lwage2)
-ax.set_title('Twins residuals: educ and lwage')
+ax.set_title('Twins: educ and res_lwage2')
 ax.set_ylabel('res')
 ax.set_xlabel('educ')
-fig.savefig(path+"twins_residual_lwage_educ.png")
+plt.show()
+#fig.savefig(path+"twins_residual_lwage_educ.png")
 fig.clf()
 
 # Testing heteroskedacity
@@ -217,10 +220,11 @@ print(lm.summary())
 fig = plt.figure()
 ax = fig.add_subplot(111)
 ax.scatter(df.educ, df.res_hrwage2)
-ax.set_title('Twins residuals: educ and hrwage')
+ax.set_title('Twins: educ and res_hrwage')
 ax.set_ylabel('res')
 ax.set_xlabel('educ')
-fig.savefig(path+"twins_residual_hrwage_educ.png")
+plt.show()
+#fig.savefig(path+"twins_residual_hrwage_educ.png")
 fig.clf()
 
 print("\n\n\n Answer: Residuals from hrwage model appear more heteroskedastic (r-squared of .05 vs r-squared of .025 for lwage model) ie the regressors from the hrwage model are better predictors of that model's residuals than the lwage model's regressors are of that model's residuals.\n\n\n")
@@ -262,7 +266,7 @@ print("Run the regression of log-wages on education, age, age2, female, and whit
 lm_C = smf.ols(formula = 'lwage ~ educ + age + age2 + female + white', data=df).fit(cov_type='cluster', cov_kwds={'groups': df['twinId']})
 print(lm_C.summary())
 
-print("\n\n\n Answer: SE is significantly bigger on educ because the intracluster correlations are positive. Without accounting for clustering, we effectively overestimate our sample size. Note: cluster option in my stats package isn't working. These appear to be normal errors, not clustered, but I know what the values should look like!\n\n\n")
+print("\n\n\n Answer: SE is significantly bigger on educ because the intracluster correlations are positive. Without accounting for clustering, we effectively overestimate our sample size. Note: cluster package isn't working. I know what the clustered errors should look like, though.\n\n\n")
 
 print("h. Now run the regression of the average of the log-wages of each twin pair on each twin pair’s average education (i.e., you now have 340 twin pair observations based on twin averages). Does this correct the “clustering” problem in the residuals? Explain briefly.\n\n\n")
 
@@ -286,24 +290,7 @@ print(lm_IV.summary())
 print("AVG EDUC: ", np.mean(df.educ))
 print("AVG EDUCT_T: ", np.mean(df.educt_t))
 
-print("\n\n\n Return on education is slightly higher because by instrumenting with the twin's estimate we've mitigated the attenuation bias. This assumes a twin's and an individual's measurement errors aren't correlated. \n\n\n")
-
-# TODO: reliability ratio
-
-cor = np.corrcoef(df.res_lwage, df.educ)
-
-cov = np.sum((df.res_lwage-np.mean(df.res_lwage))*(df.educ-np.mean(df.educ))) / (len(df))
-
-
-print(df.columns)
-print(cov)
-print(lm_IV.summary())
-
-
-cov = np.cov(df.res_lwage, df.educ)
-
-print(cov)
-
+print("\n\n\n Return on education is slightly higher because by instrumenting with the twin's estimate we've mitigated the attenuation bias. This assumes a twin's and an individual's measurement errors aren't correlated. I don't know what is meant by 'reliability ratio' \n\n\n")
 
 print("k. Suppose there is an unmeasured factor that is associated with both an individual’s educational attainment and an individual’s earnings (e.g., innate ability, family background, school quality). Explain how this could lead to “omitted variables” bias in the least squares estimate of the return to education. Suppose that the omitted variable is Ai. Write out the “omitted variables bias” in terms of the linear relationships between education and A and log-wages and A.\n\n\n")
 
@@ -331,7 +318,8 @@ ax.set_ylabel('educ')
 ax.set_xlabel('educ_t')
 ax.set_ylim([6,20])
 ax.set_xlim([6,20])
-fig.savefig(path+"twins_educ_educt_t.png")
+plt.show()
+#fig.savefig(path+"twins_educ_educt_t.png")
 fig.clf()
 
 # Scatterplot
@@ -341,7 +329,8 @@ ax.scatter(df_first.deduc, df_first.dlwage)
 ax.set_title('first born, deduc and dlwage')
 ax.set_ylabel('dlwage')
 ax.set_xlabel('deduc')
-fig.savefig(path+"twins_dlwage_deduc.png")
+plt.show()
+#fig.savefig(path+"twins_dlwage_deduc.png")
 fig.clf()
 
 print("Answer: Most observations are clustered close to zero in terms of the x-axis of deduc. This implies that our model may be very sensitive to measurement error. By first-differencing the data, we're giving up signal but keeping all the noise, so our attenuation bias will be even worse than before. This could exacerbate the measurement error problem and explain why our estimated returns to educ are lower when running the first-differenced regression.\n\n\n")
@@ -355,7 +344,6 @@ lm_IV = smf.ols(formula = 'dlwage ~ deduc_pred', data=df).fit(cov_type='HC0')
 print(lm_IV.summary())
 
 print("n. Much as it did above, using an instrument helps us get rid of the attenuation bias we had from measurement error in the self-reported data, increasing our estimate substantially. As above, this assumes a twin's and an individual's measurement errors aren't correlated--if they are, this estimate is biased. \n\n\n")
-
 
 print("\n\n\n o. Suppose that the classical measurement error assumption holds, what might one conclude about the size of the omitted variables bias in the “conventional” OLS estimate of the returns to education (i.e., the estimate from regressing lwage on educ, age, age2, female, white)? Do you think that comparing twin pair differences across families reduces the omitted variables problem? Explain.\n\n\n")
 
@@ -379,12 +367,10 @@ print("Answer: Returns to ed reduced to 6%, returns to computer reduced to 12%. 
 
 print("c. Now run a regression that also controls for the individual’s occupation category as “fixed effects” – e.g., areg y x, absorb(occ) robust (data must be sorted by occ). Interpret the implications of your findings for the role of potential omitted variables bias in the OLS estimate of the effect of computer use on log-wages (see DiNardo and Pischke for their interpretation).\n\n\n")
 
-#To run this regression, delete '#' symbol in next two lines
-
 lm = smf.ols(formula = 'lnw ~ ed + exp + exp2 + female + mar + computer + hammer + telefon + calc + pencil + C(occ)', data=df).fit(cov_type='H0')
 print(lm.summary())
 
-print("\n\n\n Answer: The effect of using a computer at work has gone down to 7%. As DiNardo and Pischke conclude, these results seem to suggest that computer users have unobserved skills which might have little to do with computers, but which are rewarded on the job market, or that computers were introduced first in higher-paying jobs.\n\n\n")
+print("\n\n\n Answer: The effect of using a computer at work has gone down to 7%. As DiNardo and Pischke conclude, these results seem to suggest that computer users have unobserved skills which might have little to do with computers, but which are rewarded on the job market, or that computers were introduced first in higher-paying jobs.Note, these results make it clear that this is not an appropriate way to measure the returns to a given technology—are we to assume that using a hammer yields negative returns? \n\n\n")
  
 
 
