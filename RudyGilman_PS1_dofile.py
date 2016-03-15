@@ -1,3 +1,18 @@
+Skip to content
+Sign up Sign in
+This repository  
+Search
+Explore
+Features
+Enterprise
+Pricing
+ Watch 1  Star 0  Fork 0 rgilman33/applied_econometrics
+ Code  Issues 0  Pull requests 0  Pulse  Graphs
+Branch: master Find file Copy pathapplied_econometrics/RudyGilman_PS1_dofile.py
+e128d6d  10 days ago
+@rgilman33 rgilman33 dd
+1 contributor
+RawBlameHistory    378 lines (260 sloc)  24.8 KB
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
@@ -24,9 +39,7 @@ df = pd.read_stata(path+"pubtwins.dta", convert_categoricals=False)
 
 """
 Data Notes:
-
 1. The data set has 680 observations ordered by twin pairs – i.e., there are 340 twin pairs in the data, and the data is sorted by these pairs. So, the first two observations are the first twin pair, the next two observations are the second twin pair, etc.
-
 2. The key variables are:
 - hrwage = the self-reported hourly wage of the individual (in dollars)
 - lwage = the natural log (ln) of the hourly wage
@@ -39,14 +52,10 @@ Data Notes:
 - dlwage = the difference in the log-wages of twins
 - deduc = the difference in twins’ education based on their self-reports
 - deduct = the difference in twins’ education based on each twin’s report of the other twin’s education
-
 Data Source 2: restricted92.dta
 This data extract is from a 1992 survey of workers in Germany and comes from the DiNardo and Pischke paper, “The Returns to Computer Use Revisited: Have Pencils Changed the Wage Structure Too?”(1997). The observational unit of the data is the individual.
-
 Data Notes:
-
 1. The data set has 20,042 observations on 19 variables.
-
 2. The key variables are:
 - lnw = the natural log (ln) of the hourly wage reported by the individual
 - ed = the educational attainment of the individual
@@ -59,7 +68,6 @@ Data Notes:
 - calc = indicator equal to one if person uses a calculator at work
 - hammer = indicator equal to one if person uses a hammer at work
 - occ = 4-digit occupation codes
-
 1. Estimating the returns to education using the twins data"""
 
 
@@ -375,3 +383,5 @@ print("\n\n\n Answer: The effect of using a computer at work has gone down to 7%
  
 
 
+Status API Training Shop Blog About Pricing
+© 2016 GitHub, Inc. Terms Privacy Security Contact Help

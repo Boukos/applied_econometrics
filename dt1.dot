@@ -1,0 +1,17 @@
+digraph Tree {
+node [shape=box, style="filled, rounded", color="black", fontname=helvetica] ;
+edge [fontname=helvetica] ;
+0 [label=<petal_length &le; 4.75<br/>entropy = 1.0<br/>samples = 100<br/>value = [50, 50]<br/>class = versicolour>, fillcolor="#e5813900"] ;
+1 [label=<sepal_width &le; 2.55<br/>entropy = 0.1537<br/>samples = 45<br/>value = [44, 1]<br/>class = versicolour>, fillcolor="#e58139f9"] ;
+0 -> 1 [labeldistance=2.5, labelangle=45, headlabel="True"] ;
+2 [label=<entropy = 0.3912<br/>samples = 13<br/>value = [12, 1]<br/>class = versicolour>, fillcolor="#e58139ea"] ;
+1 -> 2 ;
+3 [label=<entropy = 0.0<br/>samples = 32<br/>value = [32, 0]<br/>class = versicolour>, fillcolor="#e58139ff"] ;
+1 -> 3 ;
+4 [label=<petal_length &le; 5.15<br/>entropy = 0.4972<br/>samples = 55<br/>value = [6, 49]<br/>class = virginica>, fillcolor="#399de5e0"] ;
+0 -> 4 [labeldistance=2.5, labelangle=-45, headlabel="False"] ;
+5 [label=<entropy = 0.8631<br/>samples = 21<br/>value = [6, 15]<br/>class = virginica>, fillcolor="#399de599"] ;
+4 -> 5 ;
+6 [label=<entropy = 0.0<br/>samples = 34<br/>value = [0, 34]<br/>class = virginica>, fillcolor="#399de5ff"] ;
+4 -> 6 ;
+}
