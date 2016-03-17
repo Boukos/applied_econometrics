@@ -108,7 +108,7 @@ def optimize_propensity_groups(df, threshhold):
             else:
                 f=pd.concat([f, s], axis=0)
         return f
-            
+                   
     def calc_final_score(df):
         scores = get_scores(df)
         groupNames = [i[0] for i in scores]

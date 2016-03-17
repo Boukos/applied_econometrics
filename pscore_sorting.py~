@@ -23,7 +23,7 @@ path = "/home/rudebeans/Desktop/school_spring2016/applied_econometrics/"
 #os.path.dirname(__file__)
 
 df = pd.read_stata(path+"smoking2.dta", convert_categoricals=False)
-df = df.sample(n=100000, random_state=1985)
+df = df.sample(n=20000, random_state=1985)
 
 print(df)
 
