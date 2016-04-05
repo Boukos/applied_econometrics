@@ -24,6 +24,8 @@ from sklearn.tree import export_graphviz
 #from sklearn.externals.six import StringIO
 #import pydot 
 import seaborn as sns
+from sklearn.ensemble import AdaBoostClassifier
+import xgboost as xgb
 
 #df = pd.read_pickle('df_with_p.txt')
 
@@ -31,9 +33,11 @@ path = "/home/rudebeans/Downloads/"
 
 df = pd.read_csv(path+"train.csv")
 re = df[df.TARGET==1]
-re_non = df[df.TARGET==0].sample(n=10000, random_state=1985)
+re_non = df[df.TARGET==0].sample(n=15000, random_state=1985)
 
 re_df = pd.concat([re,re_non], axis=0)
+
+#re_df = df
 
 """
 # Deleting columns w no variation
@@ -45,8 +49,8 @@ for variable in re_df.columns:
 re_df = re_df[cols]
 """
 y = re_df['TARGET']
-X = re_df[re_df.columns[re_df.columns!='TARGET']]#.iloc[:,5:20]
-#X = re_df[['var38','var15']]
+X = re_df[re_df.columns[re_df.columns!='TARGET']]
+
 
 # Returns df with variables and importance, descending
 def get_imp(X,y):
@@ -56,8 +60,9 @@ def get_imp(X,y):
     imp_var = pd.DataFrame({'variable':X.columns, 'imp':imp_var}).sort('imp', ascending=False)
     return(imp_var)
 
-scoring = 'accuracy'
+scoring = 'roc_auc'
 
+"""
 #knn
 knn = KNeighborsClassifier(n_neighbors=5, p=2, metric='minkowski')
 #knn = KNeighborsClassifier()
@@ -67,6 +72,7 @@ print("KNN")
 print(np.mean(scores))
 print("\n\n\n")
 
+
 # rf 
 rf = RandomForestClassifier(criterion='entropy', min_samples_split=40, random_state=99, n_estimators=20, max_depth=5)
 #rf = RandomForestClassifier()
@@ -75,14 +81,87 @@ scores = cross_val_score(estimator=rf, X=X, y=y, cv=5, n_jobs=-1, scoring=scorin
 print("RF")
 print(np.mean(scores))
 print("\n\n\n")
-
-# c = 0.1
+"""
+#c = 0.1
 important = get_imp(X,y)
 cols=sorted(list(important.imp[:30]))
-Xs = X[important.variable[:16]]
+
+Xs = X[important.variable[:16]] # try 8 or 9
+
+
+dt = DecisionTreeClassifier(criterion='entropy', max_depth=1)
+
+ada = AdaBoostClassifier(base_estimator=dt, n_estimators=500, learning_rate=0.07, random_state=3) # params already optimized
+
+"""
+scores = cross_val_score(estimator=ada, X=Xs, y=y, cv=5, n_jobs=-1, scoring=scoring)
+print("ada")
+print(np.mean(scores))
+print("\n\n\n")
+"""
+"""
+lr = [0.05,.07, .08] 
+ne = [200, 300, 500] 
+
+param_grid = [{'learning_rate': lr, 'n_estimators':ne}]
+gs = GridSearchCV(estimator=ada, param_grid=param_grid, scoring=scoring, cv=5, n_jobs=-1)
+gs.fit(Xs,y)
+print("GS")
+print(gs.best_score_)
+print(gs.best_params_)
+print('\n\n')
+
 
 lg = LogisticRegression(C=0.1, random_state=0)
+#lg.fit(Xs, y)
+scores = cross_val_score(estimator=lg, X=Xs, y=y, cv=5, n_jobs=-1, scoring=scoring)
+print("LG")
+print(np.mean(scores))
+print("\n\n\n")
 """
+
+# XGB
+xgb = xgb.XGBClassifier(missing=np.nan, max_depth=5, n_estimators=350, learning_rate=0.03, nthread=4, subsample=0.95, colsample_bytree=0.85, seed=4242)
+
+"""
+scores = cross_val_score(estimator=clf, X=Xs, y=y, cv=5, n_jobs=-1, scoring=scoring)
+print("XGB")
+print(np.mean(scores))
+print("\n\n\n")
+"""
+
+# ensemble
+estimators = [('ada',ada),('xgb',xgb)]#,('knn',knn),('svM',svM)
+eclf = VotingClassifier(estimators=estimators, voting='soft')
+scores = cross_val_score(estimator=eclf, X=Xs, y=y, cv=5, n_jobs=-1, scoring=scoring)
+print("ENSEMBLE")
+print(np.mean(scores))
+print("\n\n\n")
+
+
+"""
+X_fit, X_eval, y_fit, y_eval= train_test_split(X_train, y_train, test_size=0.3)
+
+# fitting
+clf.fit(X_train, y_train, early_stopping_rounds=20, eval_metric="auc", eval_set=[(X_eval, y_eval)])
+
+print('Overall AUC:', roc_auc_score(y_train, clf.predict_proba(X_train)[:,1]))
+
+# predicting
+y_pred= clf.predict_proba(X_test)[:,1]
+
+
+
+
+#svm takes awhile
+svM = svm.SVC()
+#svM.fit(Xs,y)
+scores = cross_val_score(estimator=svM, X=Xs, y=y, cv=5, n_jobs=-1, scoring=scoring)
+print("SVM")
+print(np.mean(scores))
+print("\n\n\n")
+
+
 C_range = [0.0001,0.01,0.1, 1.0, 10.0, 1000.0]
 param_grid = [{'C': C_range}]
 gs = GridSearchCV(estimator=lg, param_grid=param_grid, scoring='accuracy', cv=5, n_jobs=-1)
@@ -91,23 +170,7 @@ print("GS")
 print(gs.best_score_)
 print(gs.best_params_)
 print('\n\n')
-"""
-lg.fit(Xs, y)
-scores = cross_val_score(estimator=lg, X=X, y=y, cv=5, n_jobs=-1, scoring=scoring)
-print("LG")
-print(np.mean(scores))
-print("\n\n\n")
 
-# ensemble
-estimators = [('lg',lg),('rf',rf)]#,('knn',knn),('svM',svM)
-eclf = VotingClassifier(estimators=estimators, voting='hard')
-scores = cross_val_score(estimator=eclf, X=X, y=y, cv=5, n_jobs=-1, scoring=scoring)
-print("ENSEMBLE")
-print(np.mean(scores))
-print("\n\n\n")
-
-
-"""
 depth_range = [None,1,2,5,10,15]
 forest_n_range = [20,50,100,200]
 param_grid = [{'max_depth': depth_range, 'n_estimators': forest_n_range}]

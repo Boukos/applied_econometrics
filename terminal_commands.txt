@@ -1,0 +1,10 @@
+
+# for removing old versions of postgresql
+
+sudo apt-get remove --purge postgresql-9.1
+sudo apt-get install postgresql-9.1
+
+
+# wipe postgres database. doesn't do much
+
+python manage.py sqlflush | python manage.py dbshell

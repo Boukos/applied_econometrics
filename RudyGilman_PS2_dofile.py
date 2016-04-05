@@ -479,7 +479,7 @@ def get_cond_means(df):
     cm = pd.DataFrame({'means_s':means_s, 'means_ns':means_ns, 'pg':pg})
     return cm
 
-# For making scatterplots. y, x must both be array
+# For making scatterplots. x must be array
 def scat(x, ys, title=None, legend=None):
     c = ['blue', 'red', 'green', 'yellow', 'purple']
     fig = plt.figure()
