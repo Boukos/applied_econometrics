@@ -8,3 +8,28 @@ sudo apt-get install postgresql-9.1
 # wipe postgres database. doesn't do much
 
 python manage.py sqlflush | python manage.py dbshell
+
+
+
+postgres 
+
+sudo su postgres
+psql
+
+
+# to drop and readd a database
+
+DROP DATABASE cdb;
+CREATE DATABASE cdb;
+GRANT ALL PRIVILEGES ON DATABASE cdb TO beans;
+
+# to create a user
+CREATE USER beans WITH PASSWORD 'beansword';
+
+# to add extensions
+CREATE EXTENSION hstore;
+
+\q
+
+
+

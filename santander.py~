@@ -88,6 +88,35 @@ cols=sorted(list(important.imp[:30]))
 
 Xs = X[important.variable[:16]] # try 8 or 9
 
+# returns df w only interacted, higher-order variables
+def get_interact_higher(df):
+    sig = Xs.columns
+    # Interacting each significant variable with every other significant variable
+    for i in range(len(sig)): 
+        for r in range(len(sig)):
+            if i < r:
+                colName = str(sig[i]) + str(sig[r])
+                df[colName] = df[sig[i]] * df[sig[r]]    
+                                       
+    # Making higher order variables up to ^2
+    for i in range(len(sig)): 
+        for r in range(2,3):
+            df[str(sig[i])+str(r)] = (df[sig[i]])**r
+    dup = []
+    for i in range(len(df.columns)): 
+        # Deleting identical cols
+        for r in range(len(df.columns)):
+            if (i < r) and (list(df[df.columns[i]]) == list(df[df.columns[r]])):
+                dup.append(df.columns[i])  
+        # Deleting columns w no variation
+        if np.std(df[df.columns[i]]) == 0:
+            print df.columns[i]
+            dup.append(df.columns[i])   
+    return df
+
+Xs = get_interact_higher(Xs)
+Xs.to_pickle('Xs.txt')
+print('done interacting')
 
 dt = DecisionTreeClassifier(criterion='entropy', max_depth=1)
 
