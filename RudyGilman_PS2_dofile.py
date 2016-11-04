@@ -36,40 +36,12 @@ original = copy.deepcopy(df)
 """
 This exercise examines the following research question: What is the effect of maternal smoking during pregnancy on infant birth weight and death? Feel free to work cooperatively and in groups. Each person must hand in his/her own problem set using his/her own words and interpretation of the results. Please include a concise summary of your empirical results when appropriate.
 
-We will analyze the following STATA data set:
-
 Data Source: smoking2.dta
 This STATA data extract is from the 1989 Linked National Natality-Mortality Detail Files, which are an
 annual census of births in the U.S., derived from Certificates of Live Birth. Information on subsequent infant death within a year of birth is derived from Death Certificates. This extract consists of all births in Pennsylvania in 1989. The observational unit of the data is the mother-infant outcome match.
 
-Data Notes:
-
-1. There are 139,149 observations and 32 variables. For this problem set, observations with missing values for any of the variables below were dropped from the original sample (about 17%).
-
-2. The key variables are:
-dbirwt = birth weight of the infant (in grams)
-death = indicator equal to one if the infant died within one-year of birth and zero, otherwise
-tobacco = indicator equal to one if the mother smoked during pregnancy and zero, otherwise.
-
-3. The relevant control variables are:
-
-Mother’s Attributes:
-dmage (mother’s age), dmeduc (mother’s educational attainment), mblack (indicator=1 if mother is black), motherr (=1 if neither black nor white), mhispan (=1 if Hispanic), dmar (=1 if mother is unmarried), foreignb (=1 if mother is foreign born)
-
-Father’s Attributes:
-dfage (father’s age), dfeduc (father’s education), fblack, fotherr, fhispan (racial indicators for father)
-
-Other Risky Behavior:
-alcohol (indicator=1 if mother drank alcohol during pregnancy), drink (# of drinks per week)
-
-Medical Care:
-tripre1, tripre2, tripre3 (indicators=1 if 1st prenatal care visit in 1st, 2nd, or 3rd trimester, respectively), tripre0 (=1 if no prenatal care visits), nprevist (total # of prenatal care visits)
-
-Pregnancy History and Maternal Health:
-first (=1 if first-born), dlivord (birth order), deadkids (# previous births where newborn died), disllb (months since last birth), preterm (=1 if previous birth premature or small for gestational age), pre4000 (=1 if previously had > 4000 gram newborn), plural (=1 if twins or greater birth), phyper (=1 if mother had pregnancy-associated hypertension), diabete (=1 if mother diabetic), anemia (=1 if mother anemic)
-
-Questions:
 """
+
 print("\n\n\n a) Under what conditions can one identify the average treatment effect of maternal smoking by comparing the unadjusted difference in mean birth weight of infants of smoking and non-smoking mothers? Under the assumption that maternal smoking is randomly assigned, estimate its impact on birth weight. Provide some evidence for or against the hypothesis that maternal smoking is randomly assigned.")
 
 print("\n\n\n Answer: If smoking is randomly assigned. Evidence against random assignment: Mothers who smoke probably do other things to lower birthweight, i.e. drink alcohol, do drugs. As we'll see below, this is the case. Evidence for random assignment: If these results were from a society / time period in which smoking wasn't known to be unhealthy, assignment might be random. As the means for smokers and nonsmokers shown below demonstrates, smokers and nonsmokers are very different in every way measured.\n\n\n")
@@ -135,10 +107,47 @@ def get_imp(X,y):
     imp_var = rf.feature_importances_
     imp_var = pd.DataFrame({'variable':X.columns, 'imp':imp_var}).sort('imp', ascending=False)
     return(imp_var)
- 
-imp_var=get_imp(X, df.dbirwt)    
+
+
+
+imp_var=get_imp(X, df.dbirwt)  
+"""  
+imp_var.to_pickle('imp_var.txt')
+
+imp_var = pd.read_pickle("imp_var.txt")
+"""
+
 sig = list(imp_var[imp_var.imp > .001].variable)
+
+# JUst showing for own visualization purposes
+cols = list(imp_var.variable[0:5])
+
+print cols
+
+pp = df[cols].sample(500).dropna()
+print pp
+
+sns.set(style="ticks", color_codes=True)
+#iris = sns.load_dataset("iris")
+
+g = sns.PairGrid(pp)
+g = g.map_upper(plt.scatter, alpha=.5)
+g = g.map_lower(sns.kdeplot, cmap="Blues_d")
+g = g.map_diag(sns.distplot)
+#g = sns.pairplot(pp, kind='reg')
+
+# Rescaling axis. Why doesn't Seaborn do this for me automatically?
+axes = g.axes
+for i in range(len(cols)):
+    axes[i,i].set_ylim(np.min(pp[cols[i]]),np.max(pp[cols[i]]))
+    axes[i,i].set_xlim(np.min(pp[cols[i]]),np.max(pp[cols[i]]))
+#g.set(ylim=(0, 9))
+#g.set(xlim=(0, 9)) sets all axes to this extent
+plt.show()
+
+
 sig.remove('tobacco')
+
 
 for_interact = df[df.columns[df.columns.isin(sig)==True]]
 

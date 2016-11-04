@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 #########################################
-# Applied Econometrics, PS3             #
+# Applied Econometrics, PS4             #
 # Rudy Gilman                           #
 # March 30, 2016                        #
 #########################################

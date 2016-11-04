@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 #########################################
-# Applied Econometrics, PS3             #
+# Applied Econometrics, PS4             #
 # Rudy Gilman                           #
 # March 30, 2016                        #
 #########################################
@@ -29,7 +29,6 @@ path = "/home/rudebeans/Desktop/school_spring2016/applied_econometrics/"
 df = pd.read_csv(path+"poll7080.csv")
 
 df['intercept'] = 1 # Adding constant
-
 
 """
 Problem Set 4
@@ -203,10 +202,12 @@ for i in range(len(Xs)):
     X = Xs[i]
     first = sm.OLS(df.dgtsp, X, missing="drop").fit()
     print first.summary()
+    print '\n'
     print Xs_str[i]+": first stage tsp7576 coefficient:"
     print first.params['tsp7576']
     reduced = sm.OLS(df.dlhouse, X, missing="drop").fit()
     print reduced.summary()
+    print '\n'
     print Xs_str[i]+": reduced form tsp7576 coefficient:"
     print reduced.params['tsp7576']  
     # IV
@@ -236,10 +237,12 @@ for i in range(len(Xs)):
     X = Xs[i]
     first = sm.OLS(df.dgtsp, X, missing="drop").fit()
     print first.summary()
+    print '\n'
     print Xs_str[i]+": first stage tsp75 coefficient:"
     print first.params['tsp75']
     reduced = sm.OLS(df.dlhouse, X, missing="drop").fit()
     print reduced.summary()
+    print '\n'
     print Xs_str[i]+": reduced form tsp75 coefficient:"
     print reduced.params['tsp75']  
     # IV
@@ -271,6 +274,7 @@ ax.set_xlabel(str(x))
 #ax.legend([y, y2])
 plt.show()
 fig.clf() 
+print '\n'
 
 
 print "e. Describe (in words) the theoretical reasons why the effects of pollution changes on housing price changes may be heterogeneous.  Under what assumptions will two-stage least squares identify the average treatment effect (ATE)? What is the economic interpretation of ATE in the context of hedonic theory? If ATE is not identified, describe what may be identifiable with two-stage least squares estimation. Under what conditions is this effect identified? Give some intuition on what this effect may represent when one uses EPA regulation as an instrument.\n\n"
